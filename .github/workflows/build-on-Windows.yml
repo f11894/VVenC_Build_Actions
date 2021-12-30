@@ -1,0 +1,41 @@
+name: Build on Windows
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        branch: [v1.3.1]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Install dependencies
+      shell: cmd
+      run: |
+        C:\msys64\usr\bin\bash -lc "pacman -S mingw-w64-x86_64-cmake mingw-w64-x86_64-nasm mingw-w64-x86_64-yasm mingw-w64-x86_64-meson mingw-w64-x86_64-ninja --noconfirm"
+    - name: configure
+      shell: cmd
+      run: |
+        set MSYSTEM=MINGW64
+        set HOME=${{ github.workspace }}
+        git clone -b ${{ matrix.branch }} https://github.com/fraunhoferhhi/vvenc
+        C:\msys64\usr\bin\bash -lc "cd vvenc && mkdir gcc_cmake && cd gcc_cmake && cmake .. -G Ninja -DCMAKE_C_FLAGS='-flto' -DCMAKE_CXX_FLAGS='-flto' -DCMAKE_EXE_LINKER_FLAGS='-static -static-libgcc -flto -s' -DCMAKE_BUILD_TYPE=Release && ninja"
+    - name: make
+      shell: cmd
+      run: |
+        set MSYSTEM=MINGW64
+        set HOME=${{ github.workspace }}
+        C:\msys64\usr\bin\bash -lc "cd vvenc/gcc_cmake && ninja"
+        copy /y vvenc\bin\release-static\*.exe .\
+        copy /y SVT-AV1\LICENSE.txt LICENSE.txt
+    - name: Upload result
+      uses: actions/upload-artifact@v2
+      with:
+        name: VVenC_${{ matrix.branch }}
+        path: |
+          *.exe
+          LICENSE.txt
