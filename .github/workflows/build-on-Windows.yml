@@ -22,13 +22,11 @@ jobs:
       run: |
         set MSYSTEM=MINGW64
         set HOME=${{ github.workspace }}
+        set CFLAGS=-flto -v
+        set CXXFLAGS=%CFLAGS%
+        set LDFLAGS=-static -static-libgcc -flto -s
         git clone --depth 1 -b ${{ matrix.branch }} https://github.com/fraunhoferhhi/vvenc
-        C:\msys64\usr\bin\bash -lc "cd vvenc && mkdir gcc_cmake && cd gcc_cmake && cmake .. -G Ninja -DCMAKE_C_FLAGS='-flto' -DCMAKE_CXX_FLAGS='-flto' -DCMAKE_EXE_LINKER_FLAGS='-static -static-libgcc -flto -s' -DCMAKE_BUILD_TYPE=Release"
-    - name: make
-      shell: cmd
-      run: |
-        set MSYSTEM=MINGW64
-        set HOME=${{ github.workspace }}
+        C:\msys64\usr\bin\bash -lc "cd vvenc && mkdir gcc_cmake && cd gcc_cmake && cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release"
         C:\msys64\usr\bin\bash -lc "cd vvenc/gcc_cmake && ninja"
         copy /y vvenc\bin\release-static\*.exe .\
         copy /y vvenc\LICENSE.txt LICENSE.txt
