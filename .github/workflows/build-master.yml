@@ -28,7 +28,7 @@ jobs:
         set CXXFLAGS=%CFLAGS%
         set LDFLAGS=-static -static-libgcc -static-libstdc++ -flto -s
         git clone https://github.com/fraunhoferhhi/vvenc
-        for /f "delims=" %%i in ('git -C vvenc log -1 --format="%%H"') do set "shorthash=%%i"
+        for /f "delims=" %%i in ('git -C vvenc log -1 --format="%%h"') do set "shorthash=%%i"
         for /f "delims=" %%i in ('git -C vvenc rev-list --count HEAD') do set "revision=%%i"
         C:\msys64\usr\bin\bash -lc "cd vvenc && mkdir gcc_cmake && cd gcc_cmake && cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release"
         C:\msys64\usr\bin\bash -lc "cd vvenc/gcc_cmake && ninja"
