@@ -16,7 +16,7 @@ jobs:
     - name: Install dependencies
       shell: cmd
       run: |
-        C:\msys64\usr\bin\bash -lc "pacman -S mingw-w64-x86_64-nasm mingw-w64-x86_64-yasm mingw-w64-x86_64-meson mingw-w64-x86_64-ninja --noconfirm"
+        C:\msys64\usr\bin\bash -lc "pacman -S --needed mingw-w64-x86_64-cmake mingw-w64-x86_64-gcc mingw-w64-x86_64-nasm mingw-w64-x86_64-yasm mingw-w64-x86_64-ninja mingw-w64-x86_64-pkg-config mingw-w64-x86_64-meson git base-devel autotools --noconfirm"
     - name: build
       shell: cmd
       run: |
