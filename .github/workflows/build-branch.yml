@@ -13,21 +13,39 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Install dependencies
-      shell: cmd
-      run: |
-        C:\msys64\usr\bin\bash -lc "pacman -S --needed mingw-w64-x86_64-cmake mingw-w64-x86_64-gcc mingw-w64-x86_64-nasm mingw-w64-x86_64-yasm mingw-w64-x86_64-ninja mingw-w64-x86_64-pkg-config mingw-w64-x86_64-meson git base-devel autotools --noconfirm"
+    - uses: msys2/setup-msys2@v2
+      with:
+        location: D:\msys2_github\
+        update: true
+        install: >-
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-nasm
+            mingw-w64-x86_64-yasm
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-meson
+            git
+            base-devel
+            autotools
+        msystem: MINGW64
+        path-type: strict
     - name: build
+      shell: msys2 {0}
+      run: |
+        export HOME=${{ github.workspace }}
+        export LDFLAGS="-static -static-libgcc -static-libstdc++ -s"
+        export CFLAGS=-"flto -v"
+        export CXXFLAGS="$CFLAGS"
+        git clone --depth 1 -b ${{ matrix.branch }} https://github.com/fraunhoferhhi/vvenc
+        cd vvenc
+        mkdir gcc_cmake
+        cd gcc_cmake
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+        ninja
+    - name: postprocessing
       shell: cmd
       run: |
-        set MSYSTEM=MINGW64
-        set HOME=${{ github.workspace }}
-        set CFLAGS=-flto -v
-        set CXXFLAGS=%CFLAGS%
-        set LDFLAGS=-static -static-libgcc -static-libstdc++ -flto -s
-        git clone --depth 1 -b ${{ matrix.branch }} https://github.com/fraunhoferhhi/vvenc
-        C:\msys64\usr\bin\bash -lc "cd vvenc && mkdir gcc_cmake && cd gcc_cmake && cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release"
-        C:\msys64\usr\bin\bash -lc "cd vvenc/gcc_cmake && ninja"
         copy /y vvenc\bin\release-static\*.exe .\
         copy /y vvenc\LICENSE.txt LICENSE.txt
         7z a "VVenC_${{ matrix.branch }}.7z" *.exe LICENSE.txt
@@ -68,3 +86,4 @@ jobs:
           assets+=("-a" "$asset")
         done
         hub release create "${assets[@]}" -m "$RELEASE_NAME" "$TAG_NAME"
+        
