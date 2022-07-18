@@ -35,7 +35,7 @@ jobs:
       run: |
         export HOME=${{ github.workspace }}
         export LDFLAGS="-static -static-libgcc -static-libstdc++ -s"
-        export CFLAGS=-"flto -v"
+        export CFLAGS=-"flto"
         export CXXFLAGS="$CFLAGS"
         git clone --depth 1 -b ${{ matrix.branch }} https://github.com/fraunhoferhhi/vvenc
         cd vvenc
