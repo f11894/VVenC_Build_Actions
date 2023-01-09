@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - uses: msys2/setup-msys2@v2
@@ -54,7 +54,7 @@ jobs:
         copy /y vvenc\LICENSE.txt LICENSE.txt
         7z a "VVenC_r%revision%-%shorthash%.7z" *.exe LICENSE.txt
     - name: Upload result
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: VVenC
         path: |
@@ -66,9 +66,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: VVenC
         path: artifacts
