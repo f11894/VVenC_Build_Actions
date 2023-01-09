@@ -73,7 +73,7 @@ jobs:
       id: get_date
       run: |
         DATE_TIME=`date +'%Y-%m-%d-%H-%M-%S'`
-        echo "::set-output name=DATE_TIME::${DATE_TIME}"        
+        echo "REV_SHA=${SHA}" >> $GITHUB_OUTPUT        
     # https://github.com/Mr-Ojii/L-SMASH-Works-Auto-Builds
     - name: Create a Release
       env:
