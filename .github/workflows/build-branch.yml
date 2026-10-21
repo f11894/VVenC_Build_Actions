@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        branch: [v1.12.0]
+        branch: [v1.14.0]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -18,24 +18,24 @@ jobs:
         location: D:\msys2_github\
         update: true
         install: >-
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-nasm
-            mingw-w64-x86_64-yasm
-            mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-meson
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-nasm
+            mingw-w64-ucrt-x86_64-yasm
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-pkg-config
+            mingw-w64-ucrt-x86_64-meson
             git
             base-devel
             autotools
-        msystem: MINGW64
+        msystem: UCRT64
         path-type: strict
     - name: build
       shell: msys2 {0}
       run: |
         export HOME=${{ github.workspace }}
         export LDFLAGS="-static -static-libgcc -static-libstdc++ -s"
-        export CFLAGS=-"flto"
+        export CFLAGS="-flto"
         export CXXFLAGS="$CFLAGS"
         git clone --depth 1 -b ${{ matrix.branch }} https://github.com/fraunhoferhhi/vvenc
         cd vvenc
